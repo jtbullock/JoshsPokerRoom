@@ -5,12 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "watch": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Josh Bullock",
   "license": "ISC",
   "dependencies": {
+    "config": "^3.3.2",
     "express": "^4.17.1",
-    "express-handlebars": "^5.2.0"
+    "express-handlebars": "^5.2.0",
+    "express-openid-connect": "^2.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }
