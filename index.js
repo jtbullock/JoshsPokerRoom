@@ -18,7 +18,11 @@ app.engine('hbs', handlebars({
 app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-    res.render('main', {layout: 'index'});
+
+    const model = getPageModel(req);
+    model.layout = 'index';
+
+    res.render('main', model);
 });
 
 app.get('/secured', (req, res) => {
@@ -37,3 +41,14 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 app.listen(port, () => console.log(`App listening on port ${port}`));
 
+function getPageModel(req) {
+
+    if (!req.oidc.isAuthenticated()) {
+        return {isLoggedIn: false};
+    }
+
+    return {
+        isLoggedIn: req.oidc.isAuthenticated(),
+        userEmail: req.oidc.user.email
+    };
+}
