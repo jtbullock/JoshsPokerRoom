@@ -58,24 +58,38 @@ app.get('/profile', requiresAuth(), (req, res) => {
 });
 
 app.post('/profile', requiresAuth(), async (req, res) => {
-
-    const query = {
-        query: 'SELECT * from c where c.email = @email'
+    const querySpec = {
+        query: 'SELECT * from c WHERE c.email = @email',
+        parameters: [
+            {
+                name: '@email',
+                value:req.oidc.user.email
+            }
+        ]
     };
 
-    const parameters = [{name: '@email', value: req.oidc.user.email}];
-    console.dir(parameters);
-
-// read all items in the Items container
     const {resources: items} = await container.items
-        .query({
-            query,
-            parameters
-        })
+        .query(querySpec)
         .fetchAll();
 
     if (items.length > 0) {
         console.log('Existing record, updating...');
+
+        const existingRecord = items[0];
+
+        const updatedRecord = {
+            ...existingRecord,
+            fullName: req.body.fullName,
+            pokerStarsAccountName: req.body.pokerStarsAccountName,
+            payoutMethod: req.body.payoutMethod,
+            payoutId: req.body.payoutId
+        };
+
+        const {resource: updatedItem} = await container.items.upsert(updatedRecord);
+
+        console.log('Record updated...');
+        console.dir(updatedItem);
+
     } else {
         console.log('New record, creating...');
 
@@ -83,7 +97,8 @@ app.post('/profile', requiresAuth(), async (req, res) => {
             fullName: req.body.fullName,
             pokerStarsAccountName: req.body.pokerStarsAccountName,
             payoutMethod: req.body.payoutMethod,
-            payoutId: req.body.payoutId
+            payoutId: req.body.payoutId,
+            email: req.oidc.user.email
         };
 
         const {resource: createdItem} = await container.items.create(newProfile);
@@ -91,8 +106,6 @@ app.post('/profile', requiresAuth(), async (req, res) => {
         console.log('Created new profile record...');
         console.dir(createdItem);
     }
-
-    console.dir(req.body);
 
     res.render('profile', {layout: 'index'});
 });
