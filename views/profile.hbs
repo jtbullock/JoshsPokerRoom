@@ -1,71 +1,68 @@
 <h2>Profile</h2>
 
-<!--
-Fields:
-Full Name
-PokerStars Acct Name
-Payout Method
-Payout ID
--->
-
 <form method="post">
 
-    <div class="row">
+  <div class="row">
 
-        <div class="col-xs-12 col-md-6">
+    <div class="col-xs-12 col-md-6">
 
-            <div class="form-group">
-                <label for="fullName">Full Name</label>
-                <input type="text" class="form-control" id="fullName" name="fullName"/>
-            </div>
-
-        </div>
-
-        <div class="col-xs-12 col-md-6">
-
-            <div class="form-group">
-                <label for="pokerStarsAccountName">PokerStars Account Name</label>
-                <input type="text" class="form-control" id="pokerStarsAccountName" name="pokerStarsAccountName"
-                       aria-describedby="pokerStarsAccountNameHelp"/>
-                <small id="pokerStarsAccountNameHelp" class="form-text text-muted">
-                    PokerStars is free to play and does not require payment information.
-                    To set up an account, follow the instructions here: https://www.joshb.me/tournament/pokerstars-setup
-                </small>
-            </div>
-
-        </div>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" required class="form-control"
+               id="fullName" name="fullName" value="{{fullName}}"/>
+      </div>
 
     </div>
 
-    <div class="row">
+    <div class="col-xs-12 col-md-6">
 
-        <div class="col-xs-12 col-md-6">
-
-            <div class="form-group">
-                <label for="payoutMethod">Payout Method</label>
-                <select class="form-control" id="payoutMethod" name="payoutMethod">
-                    <option>PayPal</option>
-                    <option>Venmo</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="col-xs-12 col-md-6">
-
-            <div class="form-group">
-                <label for="payoutId">Payout Id</label>
-                <input type="text" class="form-control" id="payoutId" name="payoutId" aria-describedby="payoutIdHelp"/>
-                <small id="payoutIdHelp" class="form-text text-muted">
-                    How you are identified in the payment system selected above (example: If PayPal, account email
-                    address)
-                </small>
-
-            </div>
-
-        </div>
+      <div class="form-group">
+        <label for="pokerStarsAccountName">PokerStars Account Name</label>
+        <input type="text" required class="form-control" aria-describedby="pokerStarsAccountNameHelp"
+               id="pokerStarsAccountName" name="pokerStarsAccountName"
+               value="{{pokerStarsAccountName}}"/>
+        <small id="pokerStarsAccountNameHelp" class="form-text text-muted">
+          PokerStars is free to play and does not require payment information.
+          To set up an account, follow the instructions here: https://www.joshb.me/tournament/pokerstars-setup
+        </small>
+      </div>
 
     </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
+  </div>
+
+  <div class="row">
+
+    <div class="col-xs-12 col-md-6">
+
+      <div class="form-group">
+        <label for="payoutMethod">Payout Method</label>
+        <select class="form-control" id="payoutMethod" name="payoutMethod">
+          {{#select payoutMethod}}
+            <option value="PayPal">PayPal</option>
+            <option value="Venmo">Venmo</option>
+          {{/select}}
+        </select>
+      </div>
+
+    </div>
+
+    <div class="col-xs-12 col-md-6">
+
+      <div class="form-group">
+        <label for="payoutId">Payout Id</label>
+        <input type="text" required class="form-control" aria-describedby="payoutIdHelp"
+               id="payoutId" name="payoutId" value="{{payoutId}}"/>
+        <small id="payoutIdHelp" class="form-text text-muted">
+          How you are identified in the payment system selected above (example: If PayPal, account email
+          address)
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <button type="submit" class="btn btn-primary">Update</button>
 </form>

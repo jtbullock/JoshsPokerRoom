@@ -4,6 +4,10 @@ const {auth, requiresAuth} = require('express-openid-connect');
 const config = require('config');
 const CosmosClient = require("@azure/cosmos").CosmosClient;
 const bodyParser = require('body-parser');
+const userData = require('./data/users');
+const {injectBasePageModel, injectUserProfile} = require('./middleware');
+const profilePageModel = require('./page-models/profile-page-model');
+const {addNotificationToModel, createMessage} = require('./page-models/notifications');
 
 const app = express();
 const port = 3000;
@@ -27,87 +31,44 @@ app.set('view engine', 'hbs');
 
 app.engine('hbs', handlebars({
     layoutsDir: __dirname + '/views/layouts',
-    extname: 'hbs'
+    extname: 'hbs',
+    helpers: require('./handlebars-helpers')
 }));
 
 app.use(express.static('public'));
 
+/**** CUSTOM MIDDLEWARE ****/
+app.use(injectUserProfile);
+app.use(injectBasePageModel);
+
 /**** ROUTES ****/
 app.get('/', (req, res) => {
-
-    const model = getPageModel(req);
-    model.layout = 'index';
-
-    res.render('main', model);
+    res.render('main', req.basePageModel);
 });
 
-app.get('/secured', (req, res) => {
-
-    if (!req.oidc.isAuthenticated()) {
-        res.send('You are not authorized to view this page.');
-        return;
-    }
-
-    res.render('secured', {layout: 'index'});
-});
-
-app.get('/profile', requiresAuth(), (req, res) => {
-
-    res.render('profile', {layout: 'index'});
-    // res.send(JSON.stringify(req.oidc.user));
+app.get('/profile', requiresAuth(), async (req, res) => {
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+    const user = userQueryResult.wasFound ? userQueryResult.data : userData.createEmptyUser();
+    res.render('profile', profilePageModel(user, req.basePageModel));
 });
 
 app.post('/profile', requiresAuth(), async (req, res) => {
-    const querySpec = {
-        query: 'SELECT * from c WHERE c.email = @email',
-        parameters: [
-            {
-                name: '@email',
-                value:req.oidc.user.email
-            }
-        ]
-    };
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+    const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createEmptyUser();
 
-    const {resources: items} = await container.items
-        .query(querySpec)
-        .fetchAll();
+    const requestData = req.body;
+    userRecord.fullName = requestData.fullName;
+    userRecord.pokerStarsAccountName = requestData.pokerStarsAccountName;
+    userRecord.payoutMethod = requestData.payoutMethod;
+    userRecord.payoutId = requestData.payoutId;
 
-    if (items.length > 0) {
-        console.log('Existing record, updating...');
+    const {resource: upsertedUser} = await container.items.upsert(userRecord);
 
-        const existingRecord = items[0];
+    let model = profilePageModel(upsertedUser, req.basePageModel);
+    const successMessage = createMessage('success', 'Success', 'Your profile has been updated.');
+    addNotificationToModel(model, successMessage);
 
-        const updatedRecord = {
-            ...existingRecord,
-            fullName: req.body.fullName,
-            pokerStarsAccountName: req.body.pokerStarsAccountName,
-            payoutMethod: req.body.payoutMethod,
-            payoutId: req.body.payoutId
-        };
-
-        const {resource: updatedItem} = await container.items.upsert(updatedRecord);
-
-        console.log('Record updated...');
-        console.dir(updatedItem);
-
-    } else {
-        console.log('New record, creating...');
-
-        const newProfile = {
-            fullName: req.body.fullName,
-            pokerStarsAccountName: req.body.pokerStarsAccountName,
-            payoutMethod: req.body.payoutMethod,
-            payoutId: req.body.payoutId,
-            email: req.oidc.user.email
-        };
-
-        const {resource: createdItem} = await container.items.create(newProfile);
-
-        console.log('Created new profile record...');
-        console.dir(createdItem);
-    }
-
-    res.render('profile', {layout: 'index'});
+    res.render('profile', model);
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}`));
