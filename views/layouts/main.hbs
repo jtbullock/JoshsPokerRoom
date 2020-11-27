@@ -68,7 +68,7 @@
   {{#each notifications}}
     <div class="toast {{this.type}}" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header">
-        <i class="fas fa-check-circle"></i>&nbsp;
+        {{messageIcon this.type}}&nbsp;
         <strong class="mr-auto">{{this.title}}</strong>
         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
           <span aria-hidden="true">&times;</span>

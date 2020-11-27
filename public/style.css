@@ -45,6 +45,11 @@
   color: white
 }
 
+.toast.error .toast-header {
+  background-color: red;
+  color: white
+}
+
 .toast button {
   color: white;
 }
