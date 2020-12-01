@@ -1,0 +1,51 @@
+<h2>Create Event</h2>
+
+<form method="post">
+
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group">
+        <label for="eventName">Name</label>
+        <input type="text" required class="form-control"
+               id="eventName" name="eventName" value="{{eventName}}"/>
+      </div>
+    </div>
+
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group">
+        <label for="description">Description</label>
+        <input type="text" required class="form-control"
+               id="description" name="description" value="{{description}}"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+
+      <div class="form-group">
+        <label for="eventDate">Date</label>
+        <input type="date" required class="form-control"
+               id="eventDate" name="eventDate" value="{{eventDate}}"/>
+      </div>
+    </div>
+  </div>
+
+  <input type="hidden" name="client-timezone" id="client-timezone"/>
+  <input type="hidden" name="iso-formatted-date" id="iso-formatted-date"/>
+
+  <button type="submit" class="btn btn-primary">Create</button>
+
+</form>
+
+<script type="text/javascript">
+  (function () {
+    // document.getElementById("client-timezone").value = -(new Date().getTimezoneOffset() / 60);
+    document.getElementById("client-timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    document.getElementById("eventDate").onchange = () => {
+
+    }
+
+  })();
+</script>

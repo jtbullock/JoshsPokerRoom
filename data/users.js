@@ -29,12 +29,15 @@ UserData.createGetUserQuery = (email) => {
     }
 };
 
-UserData.createEmptyUser = () => {
+UserData.createNewUser = (email) => {
     return {
+        email,
         fullName: '',
         pokerStarsAccountName: '',
         payoutMethod: '',
         payoutId: '',
+        recordType: RECORD_TYPES.USER,
+        roles: []
     };
 };
 

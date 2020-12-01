@@ -1,6 +1,7 @@
 module.exports = {
     RECORD_TYPES: {
-        USER: "USER"
+        USER: "USER",
+        EVENT: "EVENT"
     },
     MESSAGE_TYPES: {
         ERROR: "error",

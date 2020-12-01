@@ -9,7 +9,9 @@ const userData = require('./data/users');
 const {injectBasePageModel, injectUserProfile} = require('./middleware');
 const profilePageModel = require('./page-models/profile-page-model');
 const {addNotificationToModel, createMessage} = require('./page-models/notifications');
-const {RECORD_TYPES, MESSAGE_TYPES} = require('./constants');
+const {MESSAGE_TYPES, SITE_ROLES} = require('./constants');
+const {hasRole} = require('./permission-checker');
+const eventData = require('./data/events');
 
 const app = express();
 const port = 3000;
@@ -46,13 +48,16 @@ app.use(injectBasePageModel);
 
 /**** ROUTES ****/
 app.get('/', (req, res) => {
+
+
+
     res.render('main', req.basePageModel);
 });
 
 app.get('/profile', requiresAuth(), async (req, res) => {
     try {
         const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-        const user = userQueryResult.wasFound ? userQueryResult.data : userData.createEmptyUser();
+        const user = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
         res.render('profile', profilePageModel(user, req.basePageModel));
     } catch {
         const errorMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
@@ -64,14 +69,13 @@ app.get('/profile', requiresAuth(), async (req, res) => {
 
 app.post('/profile', requiresAuth(), async (req, res) => {
     const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-    const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createEmptyUser();
+    const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
 
     const requestData = req.body;
     userRecord.fullName = requestData.fullName;
     userRecord.pokerStarsAccountName = requestData.pokerStarsAccountName;
     userRecord.payoutMethod = requestData.payoutMethod;
     userRecord.payoutId = requestData.payoutId;
-    userRecord.recordType = RECORD_TYPES.USER;
 
     const {resource: upsertedUser} = await container.items.upsert(userRecord);
 
@@ -80,6 +84,48 @@ app.post('/profile', requiresAuth(), async (req, res) => {
     addNotificationToModel(model, successMessage);
 
     res.render('profile', model);
+});
+
+app.get('/admin/event/create', requiresAuth(), async (req, res) => {
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+
+    if (!hasRole(userQueryResult, SITE_ROLES.ADMIN)) {
+        res.redirect('/');
+    }
+
+    res.render('admin/create-event', {...req.basePageModel, ...eventData.createNewEvent()});
+})
+
+app.post('/admin/event/create', requiresAuth(), async (req, res) => {
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+
+    if (!hasRole(userQueryResult, SITE_ROLES.ADMIN)) {
+        res.redirect('/');
+    }
+
+    const requestData = req.body;
+    const newEvent = eventData.createNewEvent();
+    newEvent.eventName = requestData.eventName;
+    newEvent.description = requestData.description;
+    newEvent.eventDate = new Date(requestData.eventDate).toISOString();
+
+    const {statusCode} = await container.items.upsert(newEvent);
+
+    let message;
+
+    if(statusCode === 201)
+    {
+        message = createMessage(MESSAGE_TYPES.SUCCESS, 'Success',
+            `Event ${requestData.eventName} has been created.`);
+    }
+    else {
+        message = createMessage(MESSAGE_TYPES.ERROR, 'Error',
+            `Unable to create event ${requestData.eventName}.`);
+    }
+
+    addNotificationToModel(req.basePageModel, message);
+
+    res.render('admin/create-event', req.basePageModel);
 });
 
 app.listen(port, () => console.log(`App listening on port ${port}`));
