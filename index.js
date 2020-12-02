@@ -49,8 +49,22 @@ app.use(injectUserProfile);
 app.use(injectBasePageModel);
 
 /**** ROUTES ****/
-app.get('/', (req, res) => {
-    res.render('main', req.basePageModel);
+app.get('/', async (req, res) => {
+    const now = DateTime.local().toUTC().toISO();
+
+    const eventsQueryResult = await eventData.createGetEventsQuery(now)(container);
+
+    const events = eventsQueryResult.data.map(event => ({
+        eventName: event.eventName,
+        eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
+        id: event.id
+    }));
+
+    const model = {...req.basePageModel, events};
+
+    console.log(model);
+
+    res.render('main', model);
 });
 
 app.get('/profile', requiresAuth(), async (req, res) => {
