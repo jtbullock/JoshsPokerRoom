@@ -104,11 +104,6 @@ app.post('/admin/event/create', requiresAuth(), async (req, res) => {
 
     const requestData = req.body;
 
-    // const eventDateObj = dayjs.tz(`${requestData.eventDate} ${requestData.eventTime}`,
-    //     requestData.clientTimezone);
-    //
-    // const eventDate = eventDateObj.toISOString();
-
     const isoDate = DateTime.fromISO(`${requestData.eventDate}T${requestData.eventTime}`,
         {zone: requestData.clientTimezone}).toUTC().toISO();
 
