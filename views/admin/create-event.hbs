@@ -29,9 +29,18 @@
                id="eventDate" name="eventDate" value="{{eventDate}}"/>
       </div>
     </div>
+
+    <div class="col-xs-12 col-md-6">
+
+      <div class="form-group">
+        <label for="eventTime">Time</label>
+        <input type="time" required class="form-control"
+               id="eventTime" name="eventTime" value="{{eventTime}}"/>
+      </div>
+    </div>
   </div>
 
-  <input type="hidden" name="client-timezone" id="client-timezone"/>
+  <input type="hidden" name="clientTimezone" id="clientTimezone"/>
   <input type="hidden" name="iso-formatted-date" id="iso-formatted-date"/>
 
   <button type="submit" class="btn btn-primary">Create</button>
@@ -41,11 +50,8 @@
 <script type="text/javascript">
   (function () {
     // document.getElementById("client-timezone").value = -(new Date().getTimezoneOffset() / 60);
-    document.getElementById("client-timezone").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-    document.getElementById("eventDate").onchange = () => {
-
-    }
-
+    var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log(timezone);
+    document.getElementById("clientTimezone").value = timezone;
   })();
 </script>

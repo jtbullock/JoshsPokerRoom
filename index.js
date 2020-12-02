@@ -12,7 +12,9 @@ const {addNotificationToModel, createMessage} = require('./page-models/notificat
 const {MESSAGE_TYPES, SITE_ROLES} = require('./constants');
 const {hasRole} = require('./permission-checker');
 const eventData = require('./data/events');
+const {DateTime} = require("luxon");
 
+/*** CREATE EXPRESS APP ****/
 const app = express();
 const port = 3000;
 
@@ -48,9 +50,6 @@ app.use(injectBasePageModel);
 
 /**** ROUTES ****/
 app.get('/', (req, res) => {
-
-
-
     res.render('main', req.basePageModel);
 });
 
@@ -104,21 +103,30 @@ app.post('/admin/event/create', requiresAuth(), async (req, res) => {
     }
 
     const requestData = req.body;
+
+    // const eventDateObj = dayjs.tz(`${requestData.eventDate} ${requestData.eventTime}`,
+    //     requestData.clientTimezone);
+    //
+    // const eventDate = eventDateObj.toISOString();
+
+    const isoDate = DateTime.fromISO(`${requestData.eventDate}T${requestData.eventTime}`,
+        {zone: requestData.clientTimezone}).toUTC().toISO();
+
+    console.log(isoDate);
+
     const newEvent = eventData.createNewEvent();
     newEvent.eventName = requestData.eventName;
     newEvent.description = requestData.description;
-    newEvent.eventDate = new Date(requestData.eventDate).toISOString();
+    newEvent.eventDate = isoDate;
 
     const {statusCode} = await container.items.upsert(newEvent);
 
     let message;
 
-    if(statusCode === 201)
-    {
+    if (statusCode === 201) {
         message = createMessage(MESSAGE_TYPES.SUCCESS, 'Success',
             `Event ${requestData.eventName} has been created.`);
-    }
-    else {
+    } else {
         message = createMessage(MESSAGE_TYPES.ERROR, 'Error',
             `Unable to create event ${requestData.eventName}.`);
     }
