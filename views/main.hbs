@@ -9,9 +9,16 @@
         <strong>{{this.eventName}}</strong>
         <br/>{{this.eventDate}}
       </div>
-      <button type="button" class="btn btn-primary">
-        Login to Register
-      </button>
+      {{#if @root/isLoggedIn}}
+        <a href="/register/{{this.id}}" class="btn btn-primary">
+          Register
+        </a>
+      {{else}}
+        <a href="/login" class="btn btn-primary">
+          Login to Register
+        </a>
+      {{/if}}
+
     </li>
   {{/each}}
 </ul>

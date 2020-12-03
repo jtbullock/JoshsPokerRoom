@@ -1,0 +1,15 @@
+<h2>Register for {{event.eventName}}</h2>
+<p><strong>{{event.eventDate}}</strong></p>
+
+<div class="alert alert-primary" role="alert">
+  Please confirm your profile information. Any changes will be saved to your profile for future use.
+</div>
+
+<form method="post">
+  {{>profile-form user }}
+
+  <input type="hidden" id="eventId" name="eventId" value="{{event.id}}" />
+
+  <button type="submit" class="btn btn-primary">Confirm & Register</button>
+</form>
+
