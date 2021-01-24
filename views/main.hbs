@@ -2,6 +2,10 @@
 
 <h2>Upcoming Tournaments</h2>
 
+{{#unless events.hasEvents }}
+  <p>There are no events to display</p>
+{{/unless}}
+
 <ul class="list-group">
   {{#each events}}
     <li class="list-group-item d-flex align-items-center">
@@ -10,9 +14,15 @@
         <br/>{{this.eventDate}}
       </div>
       {{#if @root/isLoggedIn}}
-        <a href="/register/{{this.id}}" class="btn btn-primary">
-          Register
-        </a>
+        {{#if this.isRegistered}}
+          <button class="btn btn-outline-primary register-button" disabled>
+            <i class="fas fa-check-circle"></i>&nbsp;Registered
+          </button>
+        {{else}}
+          <a href="/register/{{this.id}}" class="btn btn-primary register-button">
+            Register
+          </a>
+        {{/if}}
       {{else}}
         <a href="/login" class="btn btn-primary">
           Login to Register

@@ -1,5 +1,6 @@
 const {RECORD_TYPES} = require('../constants');
 const {DateTime} = require("luxon");
+const {optionFromList, optionFromFirstListRecord} = require('./utils/option');
 
 class EventData {
 
@@ -8,7 +9,9 @@ class EventData {
 EventData.createGetFutureEventsQuery = now => {
     return async container => {
         const querySpec = {
-            query: 'SELECT * from c WHERE c.recordType = @recordType and c.eventDate >= @eventDate',
+            query:
+                'SELECT * from c ' +
+                'WHERE c.recordType = @recordType and c.eventDate >= @eventDate',
             parameters: [
                 {name: '@recordType', value: RECORD_TYPES.EVENT},
                 {name: '@eventDate', value: now}
@@ -19,14 +22,7 @@ EventData.createGetFutureEventsQuery = now => {
             .query(querySpec)
             .fetchAll();
 
-        if (events.length === 0) {
-            return {wasFound: false};
-        }
-
-        return {
-            wasFound: true,
-            data: events
-        };
+        return optionFromList(events);
     }
 }
 
@@ -44,14 +40,7 @@ EventData.createGetEventByIdQuery = id => {
             .query(querySpec)
             .fetchAll();
 
-        if (events.length === 0) {
-            return {wasFound: false};
-        }
-
-        return {
-            wasFound: true,
-            data: events[0]
-        };
+        return optionFromFirstListRecord(events);
     }
 }
 

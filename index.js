@@ -54,14 +54,21 @@ app.get('/', async (req, res) => {
     const now = DateTime.local().toUTC().toISO();
 
     const eventsQueryResult = await eventData.createGetFutureEventsQuery(now)(container);
+    const registrationsQueryResult =
+        await registrationData.createGetFutureRegistrationsQuery(now, req.userEmail)(container);
 
-    const events = eventsQueryResult.data.map(event => ({
-        eventName: event.eventName,
-        eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
-        id: event.id
-    }));
+    let events = [];
 
-    const model = {...req.basePageModel, events};
+    if(eventsQueryResult.wasFound) {
+        events = eventsQueryResult.data.map(event => ({
+            eventName: event.eventName,
+            eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
+            id: event.id,
+            isRegistered: !!registrationsQueryResult.data.find(r => r.event.id === event.id)
+        }));
+    }
+
+    const model = {...req.basePageModel, hasEvents: eventsQueryResult.wasFound, events};
 
     res.render('main', model);
 });
@@ -168,13 +175,15 @@ app.get('/register/:id', requiresAuth(), async (req, res) => {
 });
 
 app.post('/register/:id', requiresAuth(), async (req, res) => {
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
 
-    if (!userQueryResult.wasFound) {
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+    const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
+
+    if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
         res.redirect('/');
     }
 
-    const newRegistration = registrationData.createNewRegistration(userQueryResult.data, req.params.id);
+    const newRegistration = registrationData.createNewRegistration(userQueryResult.data, eventQueryResult.data);
 
     const {statusCode} = await container.items.upsert(newRegistration);
 
