@@ -5,15 +5,8 @@ const {auth, requiresAuth} = require('express-openid-connect');
 const config = require('config');
 const CosmosClient = require("@azure/cosmos").CosmosClient;
 const bodyParser = require('body-parser');
-const userData = require('./data/users');
 const {injectBasePageModel, injectUserProfile} = require('./middleware');
-const profilePageModel = require('./page-models/profile-page-model');
-const {addNotificationToModel, createMessage} = require('./page-models/notifications');
-const {MESSAGE_TYPES, SITE_ROLES} = require('./constants');
-const {hasRole} = require('./permission-checker');
-const eventData = require('./data/events');
-const registrationData = require('./data/registrations');
-const {DateTime} = require('luxon');
+const actions = require('./actions');
 
 /*** CREATE EXPRESS APP ****/
 const app = express();
@@ -50,169 +43,15 @@ app.use(injectUserProfile);
 app.use(injectBasePageModel);
 
 /**** ROUTES ****/
-app.get('/', async (req, res) => {
-    const now = DateTime.local().toUTC().toISO();
+app.get('/', actions.main(container));
 
-    const eventsQueryResult = await eventData.createGetFutureEventsQuery(now)(container);
-    const registrationsQueryResult =
-        await registrationData.createGetFutureRegistrationsQuery(now, req.userEmail)(container);
+app.get('/profile', requiresAuth(), actions.profile.get(container));
+app.post('/profile', requiresAuth(), actions.profile.save(container));
 
-    let events = [];
+app.get('/admin/event/create', requiresAuth(), actions.admin.getCreateEventForm(container));
+app.post('/admin/event/create', requiresAuth(), actions.admin.createEvent(container));
 
-    if(eventsQueryResult.wasFound) {
-        events = eventsQueryResult.data.map(event => ({
-            eventName: event.eventName,
-            eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
-            id: event.id,
-            isRegistered: !!registrationsQueryResult.data.find(r => r.event.id === event.id)
-        }));
-    }
-
-    const model = {...req.basePageModel, hasEvents: eventsQueryResult.wasFound, events};
-
-    res.render('main', model);
-});
-
-app.get('/profile', requiresAuth(), async (req, res) => {
-    try {
-        const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-        const user = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
-        res.render('profile', profilePageModel(user, req.basePageModel));
-    } catch {
-        const errorMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
-            'We\'re sorry, but there was a problem fetching your profile.');
-        addNotificationToModel(req.basePageModel, errorMessage);
-        res.render('main', req.basePageModel);
-    }
-});
-
-app.post('/profile', requiresAuth(), async (req, res) => {
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-    const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
-
-    const requestData = req.body;
-    userRecord.fullName = requestData.fullName;
-    userRecord.pokerStarsAccountName = requestData.pokerStarsAccountName;
-    userRecord.payoutMethod = requestData.payoutMethod;
-    userRecord.payoutId = requestData.payoutId;
-
-    const {resource: upsertedUser} = await container.items.upsert(userRecord);
-
-    let model = profilePageModel(upsertedUser, req.basePageModel);
-    const successMessage = createMessage(MESSAGE_TYPES.SUCCESS, 'Success', 'Your profile has been updated.');
-    addNotificationToModel(model, successMessage);
-
-    res.render('profile', model);
-});
-
-app.get('/admin/event/create', requiresAuth(), async (req, res) => {
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-
-    if (!hasRole(userQueryResult, SITE_ROLES.ADMIN)) {
-        res.redirect('/');
-    }
-
-    res.render('admin/create-event', {...req.basePageModel, ...eventData.createNewEvent()});
-})
-
-app.post('/admin/event/create', requiresAuth(), async (req, res) => {
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-
-    if (!hasRole(userQueryResult, SITE_ROLES.ADMIN)) {
-        res.redirect('/');
-    }
-
-    const requestData = req.body;
-
-    const isoDate = DateTime.fromISO(`${requestData.eventDate}T${requestData.eventTime}`,
-        {zone: requestData.clientTimezone}).toUTC().toISO();
-
-    console.log(isoDate);
-
-    const newEvent = eventData.createNewEvent();
-    newEvent.eventName = requestData.eventName;
-    newEvent.description = requestData.description;
-    newEvent.eventDate = isoDate;
-
-    const {statusCode} = await container.items.upsert(newEvent);
-
-    let message;
-
-    if (statusCode === 201) {
-        message = createMessage(MESSAGE_TYPES.SUCCESS, 'Success',
-            `Event ${requestData.eventName} has been created.`);
-    } else {
-        message = createMessage(MESSAGE_TYPES.ERROR, 'Error',
-            `Unable to create event ${requestData.eventName}.`);
-    }
-
-    addNotificationToModel(req.basePageModel, message);
-
-    res.render('admin/create-event', req.basePageModel);
-});
-
-app.get('/register/:id', requiresAuth(), async (req, res) => {
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-    const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
-
-    if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
-        res.redirect('/');
-    }
-
-    const event = eventQueryResult.data;
-
-    const model = {
-        ...req.basePageModel,
-        event: {
-            eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
-            eventName: event.eventName,
-            id: event.id
-        },
-        user: userQueryResult.data
-    };
-
-    res.render('register', model);
-});
-
-app.post('/register/:id', requiresAuth(), async (req, res) => {
-
-    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-    const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
-
-    if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
-        res.redirect('/');
-    }
-
-    const newRegistration = registrationData.createNewRegistration(userQueryResult.data, eventQueryResult.data);
-
-    const {statusCode} = await container.items.upsert(newRegistration);
-
-    let message;
-
-    if (statusCode === 201) {
-        message = createMessage(MESSAGE_TYPES.SUCCESS, 'Success',
-            `Your registration is complete!`);
-    } else {
-        message = createMessage(MESSAGE_TYPES.ERROR, 'Error',
-            `Failed to create registration.`);
-    }
-
-    addNotificationToModel(req.basePageModel, message);
-
-    res.render('main', req.basePageModel);
-});
+app.get('/register/:id', requiresAuth(), actions.register.getRegistrationFormForEvent(container));
+app.post('/register/:id', requiresAuth(), actions.register.register(container));
 
 app.listen(port, () => console.log(`App listening on port ${port}`));
-
-/**** HELPERS ****/
-function getPageModel(req) {
-
-    if (!req.oidc.isAuthenticated()) {
-        return {isLoggedIn: false};
-    }
-
-    return {
-        isLoggedIn: req.oidc.isAuthenticated(),
-        userEmail: req.oidc.user.email
-    };
-}
