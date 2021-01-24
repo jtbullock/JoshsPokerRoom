@@ -18,7 +18,8 @@ function main(container)
                 eventName: event.eventName,
                 eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
                 id: event.id,
-                isRegistered: !!registrationsQueryResult.data.find(r => r.event.id === event.id)
+                isRegistered: registrationsQueryResult.wasFound &&
+                    !!registrationsQueryResult.data.find(r => r.event.id === event.id)
             }));
         }
 
