@@ -23,8 +23,12 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="/poker-room">Home <span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <a class="nav-link" href="/poker-room">Home/Register</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/poker-room/tournament">Tournament</a>
         </li>
 
         <li class="nav-item">
@@ -32,10 +36,6 @@
         </li>
       </ul>
       <ul class="navbar-nav">
-
-        <li class="nav-item">
-          <a class="nav-link" href="/poker-room/tournament">Tournament</a>
-        </li>
 
         {{#if isLoggedIn}}
           <li class="nav-item mr-2">
@@ -45,9 +45,17 @@
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="/profile">Profile</a>
+            <a class="nav-link" href="/poker-room/profile">Profile</a>
           </li>
         {{/if}}
+
+        <li class="nav-item">
+          {{#if isLoggedIn}}
+            <a class="nav-link" href="/logout">Logout</a>
+          {{else}}
+            <a class="nav-link" href="/login?returnTo=https://www.joshb.me/poker-room">Login</a>
+          {{/if}}
+        </li>
       </ul>
     </div>
   </div>
@@ -59,7 +67,7 @@
   </div>
 </div>
 
-<div class="container pt-4">
+<div class="container py-4">
   {{{body}}}
 </div>
 

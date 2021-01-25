@@ -1,10 +1,16 @@
-module.exports = req => {
-    if (!req.oidc.isAuthenticated()) {
-        return {isLoggedIn: false};
-    }
+module.exports = req =>
+    (layout) => {
+        const model = {
+            isLoggedIn: req.oidc.isAuthenticated(),
+        };
 
-    return {
-        isLoggedIn: req.oidc.isAuthenticated(),
-        userEmail: req.oidc.user.email
+        if (model.isLoggedIn) {
+            model.userEmail = req.oidc.user.email;
+        }
+
+        if (layout) {
+            model.layout = layout;
+        }
+
+        return model;
     };
-};

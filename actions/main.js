@@ -23,8 +23,10 @@ function main(container)
             }));
         }
 
-        const model = {...req.basePageModel, hasEvents: eventsQueryResult.wasFound, events};
-        res.render('main', model);
+        const model = {...req.basePageModel('poker-room'), hasEvents: eventsQueryResult.wasFound, events};
+
+        console.log(model);
+        res.render('poker-room/main', model);
     }
 }
 

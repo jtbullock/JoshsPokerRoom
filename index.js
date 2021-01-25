@@ -51,24 +51,21 @@ app.get('/', (req, res) => res.render('main'));
 app.get('/games/among-us', (req, res) => res.render('games/among-us'));
 app.get('/games/jackbox', (req, res) => res.render('games/jackbox'));
 
-app.get('/poker-room', (req, res) =>
-    res.render('poker-room/main', {layout:'poker-room'}));
+app.get('/poker-room', actions.main(container));
 app.get('/poker-room/tournament', (req, res) =>
-    res.render('poker-room/tournament', {layout:'poker-room'}))
+    res.render('poker-room/tournament', req.basePageModel('poker-room')))
 app.get('/poker-room/pokerstars-setup', (req, res) =>
     res.render('poker-room/pokerstars-setup', {layout:'poker-room'}))
 app.get('/poker-room/payout-structure', (req, res) =>
     res.render('poker-room/payout-structure', {layout:'poker-room'}))
 
-// app.get('/', actions.main(container));
+app.get('/poker-room/profile', requiresAuth(), actions.profile.get(container));
+app.post('/poker-room/profile', requiresAuth(), actions.profile.save(container));
 
-// app.get('/profile', requiresAuth(), actions.profile.get(container));
-// app.post('/profile', requiresAuth(), actions.profile.save(container));
-//
-// app.get('/admin/event/create', requiresAuth(), actions.admin.getCreateEventForm(container));
-// app.post('/admin/event/create', requiresAuth(), actions.admin.createEvent(container));
-//
-// app.get('/register/:id', requiresAuth(), actions.register.getRegistrationFormForEvent(container));
-// app.post('/register/:id', requiresAuth(), actions.register.register(container));
+app.get('/admin/event/create', requiresAuth(), actions.admin.getCreateEventForm(container));
+app.post('/admin/event/create', requiresAuth(), actions.admin.createEvent(container));
+
+app.get('/poker-room/register/:id', requiresAuth(), actions.register.getRegistrationFormForEvent(container));
+app.post('/poker-room/register/:id', requiresAuth(), actions.register.register(container));
 
 app.listen(port, () => console.log(`App listening on port ${port}`));

@@ -13,7 +13,7 @@ function getCreateEventForm(container) {
             res.redirect('/');
         }
 
-        res.render('admin/create-event', {...req.basePageModel, ...eventData.createNewEvent()});
+        res.render('admin/create-event', {...req.basePageModel('poker-room'), ...eventData.createNewEvent()});
     };
 }
 
@@ -49,9 +49,9 @@ function createEvent(container) {
                 `Unable to create event ${requestData.eventName}.`);
         }
 
-        addNotificationToModel(req.basePageModel, message);
+        addNotificationToModel(req.basePageModel('poker-room'), message);
 
-        res.render('admin/create-event', req.basePageModel);
+        res.render('admin/create-event', req.basePageModel('poker-room'));
     };
 }
 

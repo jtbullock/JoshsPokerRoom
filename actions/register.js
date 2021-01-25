@@ -11,13 +11,13 @@ function getRegistrationFormForEvent(container) {
         const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
 
         if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
-            res.redirect('/');
+            res.redirect('/poker-room');
         }
 
         const event = eventQueryResult.data;
 
         const model = {
-            ...req.basePageModel,
+            ...req.basePageModel('poker-room'),
             event: {
                 eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
                 eventName: event.eventName,
@@ -26,7 +26,7 @@ function getRegistrationFormForEvent(container) {
             user: userQueryResult.data
         };
 
-        res.render('register', model);
+        res.render('poker-room/register', model);
     };
 }
 
@@ -56,7 +56,7 @@ function register(container) {
         const event = eventQueryResult.data;
 
         const model = {
-            ...req.basePageModel,
+            ...req.basePageModel('poker-room'),
             event: {
                 eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
                 eventName: event.eventName,
@@ -65,7 +65,7 @@ function register(container) {
 
         addNotificationToModel(model, message);
 
-        res.render('register_success', model);
+        res.render('poker-room/register_success', model);
     }
 }
 
