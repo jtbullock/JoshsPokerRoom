@@ -1,3 +1,15 @@
+{{#unless isActivated}}
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <div class="form-group">
+        <label for="inviteCode">Invite Code</label>
+        <input type="text" required class="form-control"
+               id="inviteCode" name="inviteCode"/>
+      </div>
+    </div>
+  </div>
+{{/unless}}
+
 <div class="row">
 
   <div class="col-xs-12 col-md-6">
@@ -26,6 +38,10 @@
   </div>
 
 </div>
+
+<h4>Payout Information</h4>
+
+<p>(Optional) For ease of payouts, please provide your preferred method for receiving funds</p>
 
 <div class="row">
 

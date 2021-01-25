@@ -37,7 +37,8 @@ UserData.createNewUser = (email) => {
         payoutMethod: '',
         payoutId: '',
         recordType: RECORD_TYPES.USER,
-        roles: []
+        roles: [],
+        isActivated: false
     };
 };
 

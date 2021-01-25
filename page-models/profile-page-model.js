@@ -5,5 +5,6 @@ module.exports = (user, basePageModel) => {
         pokerStarsAccountName: user.pokerStarsAccountName,
         payoutMethod: user.payoutMethod,
         payoutId: user.payoutId,
+        isActivated: user.isActivated
     };
 }

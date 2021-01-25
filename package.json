@@ -11,16 +11,17 @@
   "author": "Josh Bullock",
   "license": "ISC",
   "dependencies": {
-    "@azure/cosmos": "^3.9.3",
+    "@azure/cosmos": "^3.9.5",
+    "base64url": "^3.0.1",
     "body-parser": "^1.19.0",
-    "config": "^3.3.2",
+    "config": "^3.3.3",
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
-    "express-openid-connect": "^2.0.0",
+    "express-openid-connect": "^2.2.0",
     "handlebars": "^4.7.6",
     "luxon": "^1.25.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "nodemon": "^2.0.7"
   }
 }
