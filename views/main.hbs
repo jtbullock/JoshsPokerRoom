@@ -1,40 +1,29 @@
-<h2>Welcome to Josh's Poker Room!</h2>
-<p>These events are designed to be recreational, home-style poker tournaments.
-  Since we sadly cannot meet in person right now, the goal is to create friendly social
-  and competitive events that everyone can safely participate in online.</p>
+<div class="row my-2">
+  <div class="col-xs-12 col-md-2 text-center">
+    <img src="/images/logo_black.png" />
+  </div>
 
-<p>For all the details on how the tournaments work, please visit the
-  <a href="https://www.joshb.me/poker-tournaments">tournament page</a>.</p>
+  <div class="col-xs-12 col-md-10 pt-2 pt-md-0">
+    <p>Being alone sucks.  Unfortunately, many of us are stuck at home with
+      limited opportunity to see our friends and loved ones.</p>
 
-<h2>Upcoming Tournaments</h2>
+    <p>I hope by organizing some simple, fun events we can keep in better
+      touch and help ease the stress of being inside all the time.
+      Note that these events are targeted for adult audiences.</p>
 
-{{#unless hasEvents}}
-  <p>There are no events to display</p>
-{{/unless}}
+    <p>Below is a list of upcoming events. We look forward to seeing you!</p>
+  </div>
 
-<ul class="list-group">
-  {{#each events}}
-    <li class="list-group-item d-flex align-items-center">
-      <div class="flex-grow-1">
-        <strong>{{this.eventName}}</strong>
-        <br/>{{this.eventDate}}
-      </div>
-      {{#if @root/isLoggedIn}}
-        {{#if this.isRegistered}}
-          <button class="btn btn-outline-primary register-button" disabled>
-            <i class="fas fa-check-circle"></i>&nbsp;Registered
-          </button>
-        {{else}}
-          <a href="/register/{{this.id}}" class="btn btn-primary register-button">
-            Register
-          </a>
-        {{/if}}
-      {{else}}
-        <a href="/login" class="btn btn-primary">
-          Login to Register
-        </a>
-      {{/if}}
+</div>
 
-    </li>
-  {{/each}}
+<h2>Upcoming Events</h2>
+
+<p>Beating the Ohio winter blues!  <strong>All events begin with a 7:30 PM social and an 8 PM start time</strong> (Eastern)</p>
+
+<ul>
+  <li>Saturday, January 16th - Jackbox Game Night</li>
+  <li>Saturday, January 23rd - Among Us</li>
+  <li>Saturday, January 30th - Poker Tournament (Registration available soon)</li>
+  <li>Saturday, February 13th - Game Night</li>
+  <li>Saturday, February 27th - Poker Tournament</li>
 </ul>

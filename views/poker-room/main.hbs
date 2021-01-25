@@ -1,0 +1,40 @@
+<h2>Welcome to Josh's Poker Room!</h2>
+<p>These events are designed to be recreational, home-style poker tournaments.
+  Since we sadly cannot meet in person right now, the goal is to create friendly social
+  and competitive events that everyone can safely participate in online.</p>
+
+<p>For all the details on how the tournaments work, please visit the
+  <a href="/poker-room/tournament">tournament page</a>.</p>
+
+<h2>Upcoming Tournaments</h2>
+
+{{#unless hasEvents}}
+  <p>Saturday, January 30th @ 8PM Eastern - New Year's Tournament</p>
+{{/unless}}
+
+<ul class="list-group">
+  {{#each events}}
+    <li class="list-group-item d-flex align-items-center">
+      <div class="flex-grow-1">
+        <strong>{{this.eventName}}</strong>
+        <br/>{{this.eventDate}}
+      </div>
+      {{#if @root/isLoggedIn}}
+        {{#if this.isRegistered}}
+          <button class="btn btn-outline-primary register-button" disabled>
+            <i class="fas fa-check-circle"></i>&nbsp;Registered
+          </button>
+        {{else}}
+          <a href="/register/{{this.id}}" class="btn btn-primary register-button">
+            Register
+          </a>
+        {{/if}}
+      {{else}}
+        <a href="/login" class="btn btn-primary">
+          Login to Register
+        </a>
+      {{/if}}
+
+    </li>
+  {{/each}}
+</ul>

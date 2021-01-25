@@ -46,9 +46,19 @@ app.use(injectUserProfile);
 app.use(injectBasePageModel);
 
 /**** ROUTES ****/
-app.get('/', (req, res) => {
-    res.render('placeholder');
-});
+app.get('/', (req, res) => res.render('main'));
+
+app.get('/games/among-us', (req, res) => res.render('games/among-us'));
+app.get('/games/jackbox', (req, res) => res.render('games/jackbox'));
+
+app.get('/poker-room', (req, res) =>
+    res.render('poker-room/main', {layout:'poker-room'}));
+app.get('/poker-room/tournament', (req, res) =>
+    res.render('poker-room/tournament', {layout:'poker-room'}))
+app.get('/poker-room/pokerstars-setup', (req, res) =>
+    res.render('poker-room/pokerstars-setup', {layout:'poker-room'}))
+app.get('/poker-room/payout-structure', (req, res) =>
+    res.render('poker-room/payout-structure', {layout:'poker-room'}))
 
 // app.get('/', actions.main(container));
 
