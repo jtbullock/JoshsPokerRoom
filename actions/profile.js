@@ -2,7 +2,7 @@ const userData = require('../data/users');
 const profilePageModel = require('../page-models/profile-page-model');
 const {MESSAGE_TYPES} = require('../constants');
 const {addNotificationToModel, createMessage} = require('../page-models/notifications');
-const config = require('config');
+const configManager = require('../config-manager');
 
 function get(container) {
     return async (req, res) => {
@@ -45,7 +45,7 @@ function save(container) {
 
         if(!userRecord.isActivated)
         {
-            const inviteCodes = config.get('inviteCodes');
+            const inviteCodes = configManager.config.inviteCodes;
             const {inviteCode} = req.body;
 
             if(!inviteCode.trim() || !inviteCodes.includes(inviteCode))

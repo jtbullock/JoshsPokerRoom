@@ -2,18 +2,21 @@ const express = require('express');
 const expressHandlebars = require('express-handlebars');
 const Handlebars = require('handlebars');
 const {auth, requiresAuth} = require('express-openid-connect');
-const config = require('config');
+const configManager = require('./config-manager');
 const CosmosClient = require("@azure/cosmos").CosmosClient;
 const bodyParser = require('body-parser');
 const {injectBasePageModel, injectUserProfile} = require('./middleware');
 const actions = require('./actions');
+
+/**** LOAD CONFIG ****/
+configManager.loadConfig();
 
 /*** CREATE EXPRESS APP ****/
 const app = express();
 const port = 3000;
 
 /**** SETUP COSMOS ****/
-const {endpoint, key, databaseId, containerId} = config.get('cosmos');
+const {endpoint, key, databaseId, containerId} = configManager.config.cosmos;
 
 const client = new CosmosClient({endpoint, key});
 
@@ -21,7 +24,7 @@ const database = client.database(databaseId);
 const container = database.container(containerId);
 
 /**** SETUP AUTH ****/
-app.use(auth(config.get('auth')));
+app.use(auth(configManager.config.auth));
 
 /**** SETUP BODY PARSER ****/
 app.use(bodyParser.urlencoded({extended: true}));
