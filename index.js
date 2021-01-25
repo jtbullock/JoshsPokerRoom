@@ -43,15 +43,19 @@ app.use(injectUserProfile);
 app.use(injectBasePageModel);
 
 /**** ROUTES ****/
-app.get('/', actions.main(container));
+app.get('/', (req, res) => {
+    res.render('placeholder');
+});
 
-app.get('/profile', requiresAuth(), actions.profile.get(container));
-app.post('/profile', requiresAuth(), actions.profile.save(container));
+// app.get('/', actions.main(container));
 
-app.get('/admin/event/create', requiresAuth(), actions.admin.getCreateEventForm(container));
-app.post('/admin/event/create', requiresAuth(), actions.admin.createEvent(container));
-
-app.get('/register/:id', requiresAuth(), actions.register.getRegistrationFormForEvent(container));
-app.post('/register/:id', requiresAuth(), actions.register.register(container));
+// app.get('/profile', requiresAuth(), actions.profile.get(container));
+// app.post('/profile', requiresAuth(), actions.profile.save(container));
+//
+// app.get('/admin/event/create', requiresAuth(), actions.admin.getCreateEventForm(container));
+// app.post('/admin/event/create', requiresAuth(), actions.admin.createEvent(container));
+//
+// app.get('/register/:id', requiresAuth(), actions.register.getRegistrationFormForEvent(container));
+// app.post('/register/:id', requiresAuth(), actions.register.register(container));
 
 app.listen(port, () => console.log(`App listening on port ${port}`));
