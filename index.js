@@ -13,7 +13,7 @@ configManager.loadConfig();
 
 /*** CREATE EXPRESS APP ****/
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 /**** SETUP COSMOS ****/
 const {endpoint, key, databaseId, containerId} = configManager.config.cosmos;
