@@ -25,7 +25,6 @@ function main(container)
 
         const model = {...req.basePageModel('poker-room'), hasEvents: eventsQueryResult.wasFound, events};
 
-        console.log(model);
         res.render('poker-room/main', model);
     }
 }

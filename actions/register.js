@@ -9,13 +9,14 @@ const {saveLogic: profileSaveLogic} = require('../actions/profile');
 
 function getRegistrationFormForEvent(container) {
     return async (req, res) => {
-        const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
         const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
 
-        if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
+        if (!eventQueryResult.wasFound) {
             res.redirect('/poker-room');
+            return;
         }
 
+        const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
         const event = eventQueryResult.data;
 
         const model = {
@@ -25,7 +26,7 @@ function getRegistrationFormForEvent(container) {
                 eventName: event.eventName,
                 id: event.id
             },
-            user: userQueryResult.data
+            ...userQueryResult.data
         };
 
         res.render('poker-room/register', model);
@@ -34,7 +35,7 @@ function getRegistrationFormForEvent(container) {
 
 function register(container) {
     return async (req, res) => {
-        const profileSaveResult = profileSaveLogic(req, res);
+        const profileSaveResult = await profileSaveLogic('poker-room/register', container,false)(req, res);
 
         if(!profileSaveResult.wasSuccessful) return;
 

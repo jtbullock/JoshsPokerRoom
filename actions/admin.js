@@ -30,8 +30,6 @@ function createEvent(container) {
         const isoDate = DateTime.fromISO(`${requestData.eventDate}T${requestData.eventTime}`,
             {zone: requestData.clientTimezone}).toUTC().toISO();
 
-        console.log(isoDate);
-
         const newEvent = eventData.createNewEvent();
         newEvent.eventName = requestData.eventName;
         newEvent.description = requestData.description;
