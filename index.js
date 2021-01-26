@@ -48,6 +48,8 @@ app.use(injectBasePageModel);
 /**** ROUTES ****/
 app.get('/', (req, res) => res.render('main'));
 
+app.get('/poker-room/login', (req, res) => res.oidc.login({ returnTo: '/poker-room' }));
+
 app.get('/games/among-us', (req, res) => res.render('games/among-us'));
 app.get('/games/jackbox', (req, res) => res.render('games/jackbox'));
 
