@@ -22,7 +22,7 @@ function getRegistrationFormForEvent(container) {
         const model = {
             ...req.basePageModel('poker-room'),
             event: {
-                eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
+                eventDate: DateTime.fromISO(event.eventDate).setZone("America/New_York").toLocaleString(DateTime.DATETIME_FULL),
                 eventName: event.eventName,
                 id: event.id
             },
@@ -64,7 +64,7 @@ function register(container) {
         const model = {
             ...req.basePageModel('poker-room'),
             event: {
-                eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
+                eventDate: DateTime.fromISO(event.eventDate).setZone("America/New_York").toLocaleString(DateTime.DATETIME_FULL),
                 eventName: event.eventName,
             },
         };
