@@ -16,7 +16,7 @@ function main(container)
         if (eventsQueryResult.wasFound) {
             events = eventsQueryResult.data.map(event => ({
                 eventName: event.eventName,
-                eventDate: DateTime.fromISO(event.eventDate).toLocaleString(DateTime.DATETIME_FULL),
+                eventDate: DateTime.fromISO(event.eventDate).setZone("America/New_York").toLocaleString(DateTime.DATETIME_FULL),
                 id: event.id,
                 isRegistered: registrationsQueryResult.wasFound &&
                     !!registrationsQueryResult.data.find(r => r.event.id === event.id)
