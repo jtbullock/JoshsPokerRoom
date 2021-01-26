@@ -4,6 +4,8 @@ const {DateTime} = require('luxon');
 const {addNotificationToModel, createMessage} = require('../page-models/notifications');
 const {MESSAGE_TYPES} = require('../constants');
 const registrationData = require('../data/registrations');
+const {upsertProfile, ValidationError, InvalidInviteCodeError} = require('../features/profile');
+const {saveLogic: profileSaveLogic} = require('../actions/profile');
 
 function getRegistrationFormForEvent(container) {
     return async (req, res) => {
@@ -32,14 +34,17 @@ function getRegistrationFormForEvent(container) {
 
 function register(container) {
     return async (req, res) => {
-        const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+        const profileSaveResult = profileSaveLogic(req, res);
+
+        if(!profileSaveResult.wasSuccessful) return;
+
         const eventQueryResult = await eventData.createGetEventByIdQuery(req.params.id)(container);
 
-        if (!userQueryResult.wasFound || !eventQueryResult.wasFound) {
+        if (!eventQueryResult.wasFound) {
             res.redirect('/');
         }
 
-        const newRegistration = registrationData.createNewRegistration(userQueryResult.data, eventQueryResult.data);
+        const newRegistration = registrationData.createNewRegistration(profileSaveResult.updatedRecord, eventQueryResult.data);
 
         const {statusCode} = await container.items.upsert(newRegistration);
 

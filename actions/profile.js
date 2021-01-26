@@ -3,6 +3,7 @@ const profilePageModel = require('../page-models/profile-page-model');
 const {MESSAGE_TYPES} = require('../constants');
 const {addNotificationToModel, createMessage} = require('../page-models/notifications');
 const configManager = require('../config-manager');
+const {upsertProfile, ValidationError, InvalidInviteCodeError} = require('../features/profile');
 
 function get(container) {
     return async (req, res) => {
@@ -22,62 +23,56 @@ function get(container) {
 
 function save(container) {
     return async (req, res) => {
-        const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
-        const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
+        await saveLogic(req, res);
+    }
+}
 
-        if(!isProfileRequestValid(req))
-        {
-            let model = profilePageModel(userRecord, req.basePageModel('poker-room'));
+async function saveLogic(req, res) {
+    const userQueryResult = await userData.createGetUserQuery(req.userEmail)(container);
+    const userRecord = userQueryResult.wasFound ? userQueryResult.data : userData.createNewUser(req.userEmail);
 
-            const validationMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
-                'Please complete all required fields.');
-            addNotificationToModel(model, validationMessage);
+    try {
+        await upsertProfile(container, req, userRecord);
 
-            res.render('poker-room/profile', model);
-            return;
-        }
-
-        const requestData = req.body;
-        userRecord.fullName = requestData.fullName;
-        userRecord.pokerStarsAccountName = requestData.pokerStarsAccountName;
-        userRecord.payoutMethod = requestData.payoutMethod;
-        userRecord.payoutId = requestData.payoutId;
-
-        if(!userRecord.isActivated)
-        {
-            const inviteCodes = configManager.config.inviteCodes;
-            const {inviteCode} = req.body;
-
-            if(!inviteCode.trim() || !inviteCodes.includes(inviteCode))
-            {
-                let model = profilePageModel(userRecord, req.basePageModel('poker-room'));
-
-                const validationMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
-                    'Please enter a valid invite code.');
-                addNotificationToModel(model, validationMessage);
-
-                res.render('poker-room/profile', model);
-                return;
-            }
-
-            userRecord.isActivated = true;
-        }
-
-        const {resource: upsertedUser} = await container.items.upsert(userRecord);
-
-        let model = profilePageModel(upsertedUser, req.basePageModel('poker-room'));
+        let model = profilePageModel({...req.body, isActivated: true}, req.basePageModel('poker-room'));
 
         const successMessage = createMessage(MESSAGE_TYPES.SUCCESS, 'Success',
             'Your profile has been updated.');
         addNotificationToModel(model, successMessage);
 
         res.render('poker-room/profile', model);
+        return {
+            wasSuccessful: true,
+            updatedRecord: userRecord
+        };
     }
-}
+    catch(err)
+    {
+        let model = profilePageModel({...req.body, isActivated: userRecord.isActivated},
+            req.basePageModel('poker-room'));
+        let popupMessage;
 
-function isProfileRequestValid(req) {
-    const requestData = req.body;
-    return !!requestData.fullName.trim() && !!requestData.pokerStarsAccountName.trim();
+        if(err instanceof ValidationError)
+        {
+            popupMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
+                'Please complete all required fields.');
+        }
+        else if(err instanceof InvalidInviteCodeError)
+        {
+            popupMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
+                'Please enter a valid invite code.');
+        } else {
+            popupMessage = createMessage(MESSAGE_TYPES.ERROR, 'Error',
+                'We\'re sorry, but an error has occurred.');
+        }
+
+        addNotificationToModel(model, popupMessage);
+        res.render('poker-room/profile', model);
+
+        return {
+            wasSuccessful: false
+        };
+    }
 }
 
 module.exports = {get, save};
