@@ -57,9 +57,9 @@ app.get('/poker-room', actions.main(container));
 app.get('/poker-room/tournament', (req, res) =>
     res.render('poker-room/tournament', req.basePageModel('poker-room')))
 app.get('/poker-room/pokerstars-setup', (req, res) =>
-    res.render('poker-room/pokerstars-setup', {layout:'poker-room'}))
+    res.render('poker-room/pokerstars-setup', req.basePageModel('poker-room')))
 app.get('/poker-room/payout-structure', (req, res) =>
-    res.render('poker-room/payout-structure', {layout:'poker-room'}))
+    res.render('poker-room/payout-structure', req.basePageModel('poker-room')))
 
 app.get('/poker-room/profile', requiresAuth(), actions.profile.get(container));
 app.post('/poker-room/profile', requiresAuth(), actions.profile.save(container));
