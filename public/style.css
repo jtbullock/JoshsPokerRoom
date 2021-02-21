@@ -78,3 +78,16 @@ h2 {
 .register-button {
     width: 130px;
 }
+
+tr.space-before td {
+  padding-top: .25em;
+}
+
+tr.space-after td {
+  padding-bottom: .25em;
+}
+
+.canasta-score-sheet input[type='text']
+{
+  border: solid 1px #b8b8b8;
+}

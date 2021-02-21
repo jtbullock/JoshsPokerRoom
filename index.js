@@ -52,6 +52,7 @@ app.get('/poker-room/login', (req, res) => res.oidc.login({ returnTo: '/poker-ro
 
 app.get('/games/among-us', (req, res) => res.render('games/among-us'));
 app.get('/games/jackbox', (req, res) => res.render('games/jackbox'));
+app.get('/games/canasta', (req, res) => res.render('games/canasta', {layout:'minimal'}));
 
 app.get('/poker-room', actions.main(container));
 app.get('/poker-room/tournament', (req, res) =>
