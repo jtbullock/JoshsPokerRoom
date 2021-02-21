@@ -87,7 +87,8 @@ tr.space-after td {
   padding-bottom: .25em;
 }
 
-.canasta-score-sheet input[type='text']
+.canasta-score-sheet input
 {
   border: solid 1px #b8b8b8;
+  width: 80px;
 }
