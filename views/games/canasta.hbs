@@ -1,140 +1,152 @@
 <h2>Canasta Score Sheet</h2>
 
 <div class="d-flex">
-  <table class="canasta-score-sheet">
-    <tr>
-      <th>
-        &nbsp;
-      </th>
-      <th>Player/Team</th>
-      <th>Player/Team</th>
-    </tr>
-    <tr style="border-bottom:solid 1px black;" class="space-after">
-      <td>
-
-      </td>
-      <td>
-        <input type="text"/>
-      </td>
-      <td>
-        <input type="text"/>
-      </td>
-    </tr>
-    {{#times 9}}
-      <tr class="space-before">
-        <td>Bonus</td>
-        <td>
-          <input type="text" name="team-A-{{@this}}-bonus" id="team-A-{{@this}}-bonus"/>
-        </td>
-        <td>
-          <input type="text" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
-        </td>
-      </tr>
+  <div style="height:550px; overflow-y:auto">
+    <table class="canasta-score-sheet">
       <tr>
-        <td>Card Points</td>
-        <td>
-          <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
-        </td>
-        <td>
-          <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
-        </td>
+        <th>
+          &nbsp;
+        </th>
+        <th>Player/Team</th>
+        <th>Player/Team</th>
       </tr>
       <tr style="border-bottom:solid 1px black;" class="space-after">
-        <td><strong>Total</strong></td>
         <td>
-          <input type="text" name="team-A-{{@this}}-total" id="team-A-{{@this}}-total" />
+
         </td>
         <td>
-          <input type="text" name="team-B-{{@this}}-total" id="team-B-{{@this}}-total" />
+          <input type="text"/>
+        </td>
+        <td>
+          <input type="text"/>
         </td>
       </tr>
-    {{/times}}
+      {{#times 9}}
+        <tr class="space-before">
+          <td>Bonus</td>
+          <td>
+            <input type="text" name="team-A-{{@this}}-bonus" id="team-A-{{@this}}-bonus"/>
+          </td>
+          <td>
+            <input type="text" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
+          </td>
+        </tr>
+        <tr>
+          <td>Card Points</td>
+          <td>
+            <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
+          </td>
+          <td>
+            <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
+          </td>
+        </tr>
+        <tr style="border-bottom:solid 1px black;" class="space-after">
+          <td><strong>Total</strong></td>
+          <td>
+            <input type="text" name="team-A-{{@this}}-total" id="team-A-{{@this}}-total"/>
+          </td>
+          <td>
+            <input type="text" name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
+          </td>
+        </tr>
+      {{/times}}
 
-    <tr class="space-before">
-      <td><strong>Final Score</strong></td>
-      <td><input type="text"/></td>
-      <td><input type="text"/></td>
-    </tr>
-  </table>
-
-  <div class="ml-5">
-    <h3 class="mb-0">Bonuses</h3>
-    <table>
-      <tr>
-        <td width="200">Canasta (w/wilds)</td>
-        <td>300</td>
-      </tr>
-      <tr>
-        <td>Natural (no wilds)</td>
-        <td>500</td>
-      </tr>
-      <tr>
-        <td>Red 3 (bonus card)</td>
-        <td>100</td>
-      </tr>
-      <tr>
-        <td>4 - Red 3's</td>
-        <td>800</td>
-      </tr>
-      <tr>
-        <td>Going Out</td>
-        <td>100</td>
-      </tr>
-      <tr>
-        <td>Going Out "concealed"</td>
-        <td>200</td>
+      <tr class="space-before">
+        <td><strong>Final Score</strong></td>
+        <td><input type="text"/></td>
+        <td><input type="text"/></td>
       </tr>
     </table>
+  </div>
 
-    <h3 class="mt-3 mb-0">Cards</h3>
-    <table>
-      <tr>
-        <td width="200">Jokers</td>
-        <td>50</td>
-      </tr>
-      <tr>
-        <td>Deuces</td>
-        <td>20</td>
-      </tr>
-      <tr>
-        <td>Aces</td>
-        <td>20</td>
-      </tr>
-      <tr>
-        <td>8 thru K</td>
-        <td>10</td>
-      </tr>
-      <tr>
-        <td>4 thru 7</td>
-        <td>5</td>
-      </tr>
-      <tr>
-        <td>Black 3</td>
-        <td>5</td>
-      </tr>
-    </table>
+  <div class="ml-4">
 
-    <h3 class="mb-0 mt-3">Minimum Meld</h3>
-    <table>
-      <tr>
-        <td width="200">Negative</td>
-        <td>15</td>
-      </tr>
-      <tr>
-        <td>0 - 1495</td>
-        <td>50</td>
-      </tr>
-      <tr>
-        <td>1500-2995</td>
-        <td>90</td>
-      </tr>
-      <tr>
-        <td>3000+</td>
-        <td>120</td>
-      </tr>
+    <div class="mr-4 mb-3">
+      <h3 class="mb-0">Bonuses</h3>
+      <table>
+        <tr>
+          <td width="200">Canasta (w/wilds)</td>
+          <td>300</td>
+        </tr>
+        <tr>
+          <td>Natural (no wilds)</td>
+          <td>500</td>
+        </tr>
+        <tr>
+          <td>Red 3 (bonus card)</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>4 - Red 3's</td>
+          <td>800</td>
+        </tr>
+        <tr>
+          <td>Going Out</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>Going Out "concealed"</td>
+          <td>200</td>
+        </tr>
+      </table>
+    </div>
 
-    </table>
+    <div class="mr-4 mb-3">
+      <h3 class="mb-0">Cards</h3>
+      <table>
+        <tr>
+          <td width="200">Jokers</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td>Deuces</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>Aces</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>8 thru K</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>4 thru 7</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>Black 3</td>
+          <td>5</td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <h3 class="mb-0">Minimum Meld</h3>
+      <table>
+        <tr>
+          <td width="200">Negative</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>0 - 1495</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td>1500-2995</td>
+          <td>90</td>
+        </tr>
+        <tr>
+          <td>3000+</td>
+          <td>120</td>
+        </tr>
+
+      </table>
+    </div>
   </div>
 
 </div>
 
+<div style="height:2em;">
+
+</div>
