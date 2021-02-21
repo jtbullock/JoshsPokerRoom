@@ -10,6 +10,7 @@
       </th>
       <th>Player/Team</th>
       <th>Player/Team</th>
+      <th>Player/Team</th>
     </tr>
     <tr>
       <td>
@@ -21,11 +22,15 @@
       <td>
         <input type="text"/>
       </td>
+      <td>
+        <input type="text"/>
+      </td>
     </tr>
     <tr style="border-bottom:solid 1px black;" class="space-after">
       <td width="100">Total score</td>
-      <td width="180"><input type="text" disabled name="team-A-grand-total-top" id="team-A-grand-total-top"/></td>
-      <td width="180"><input type="text" disabled name="team-B-grand-total-top" id="team-B-grand-total-top"/></td>
+      <td width="180"><input type="text" style="width:80px;" disabled name="team-A-grand-total-top" id="team-A-grand-total-top"/></td>
+      <td width="180"><input type="text" style="width:80px;" disabled name="team-B-grand-total-top" id="team-B-grand-total-top"/></td>
+      <td width="180"><input type="text" style="width:80px;" disabled name="team-C-grand-total-top" id="team-C-grand-total-top"/></td>
     </tr>
 
   </table>
@@ -41,6 +46,9 @@
           <td width="180">
             <input type="number" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
           </td>
+          <td width="180">
+            <input type="number" name="team-C-{{@this}}-bonus" id="team-C-{{@this}}-bonus"/>
+          </td>
         </tr>
         <tr>
           <td>Card Points</td>
@@ -49,6 +57,9 @@
           </td>
           <td>
             <input type="number" name="team-B-{{@this}}-points" id="team-B-{{@this}}-points"/>
+          </td>
+          <td>
+            <input type="number" name="team-C-{{@this}}-points" id="team-C-{{@this}}-points"/>
           </td>
         </tr>
         <tr style="border-bottom:solid 1px black;" class="space-after">
@@ -59,6 +70,9 @@
           <td>
             <input type="number" disabled name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
           </td>
+          <td>
+            <input type="number" disabled name="team-C-{{@this}}-total" id="team-C-{{@this}}-total"/>
+          </td>
         </tr>
       {{/times}}
 
@@ -66,6 +80,7 @@
         <td><strong>Final Score</strong></td>
         <td><input type="text" name="team-A-grand-total" id="team-A-grand-total"/></td>
         <td><input type="text" name="team-B-grand-total" id="team-B-grand-total"/></td>
+        <td><input type="text" name="team-C-grand-total" id="team-C-grand-total"/></td>
       </tr>
     </table>
   </div>
@@ -170,40 +185,51 @@
     function getTotalScore() {
       let totalA = 0;
       let totalB = 0;
+      let totalC = 0;
 
       const teamAGrandTotal = document.getElementById('team-A-grand-total');
       const teamBGrandTotal = document.getElementById('team-B-grand-total');
+      const teamCGrandTotal = document.getElementById('team-C-grand-total');
 
       const teamAGrandTotalTop = document.getElementById('team-A-grand-total-top');
       const teamBGrandTotalTop = document.getElementById('team-B-grand-total-top');
+      const teamCGrandTotalTop = document.getElementById('team-C-grand-total-top');
 
       for(let i = 0; i < 9; i++)
       {
         const roundTotalA = document.getElementById('team-A-' + i + '-total');
         const roundTotalB = document.getElementById('team-B-' + i + '-total');
+        const roundTotalC = document.getElementById('team-C-' + i + '-total');
 
         totalA += Number(roundTotalA.value);
         totalB += Number(roundTotalB.value);
+        totalC += Number(roundTotalC.value);
       }
 
       teamAGrandTotal.value = totalA;
       teamBGrandTotal.value = totalB;
+      teamCGrandTotal.value = totalC;
 
       teamAGrandTotalTop.value = totalA;
       teamBGrandTotalTop.value = totalB;
+      teamCGrandTotalTop.value = totalC;
     }
 
     for(let i = 0; i <9; i++) {
       const bonusA = document.getElementById('team-A-' + i + '-bonus');
       const bonusB = document.getElementById('team-B-' + i + '-bonus');
+      const bonusC = document.getElementById('team-C-' + i + '-bonus');
       const pointsA = document.getElementById('team-A-' + i + '-points');
       const pointsB = document.getElementById('team-B-' + i + '-points');
+      const pointsC = document.getElementById('team-C-' + i + '-points');
       const totalA = document.getElementById('team-A-' + i + '-total');
       const totalB = document.getElementById('team-B-' + i + '-total');
+      const totalC = document.getElementById('team-C-' + i + '-total');
 
       const calculateRoundScore = () => {
         totalA.value = Number(bonusA.value) + Number(pointsA.value);
         totalB.value = Number(bonusB.value) + Number(pointsB.value);
+        totalC.value = Number(bonusC.value) + Number(pointsC.value);
 
         getTotalScore();
       }
@@ -212,6 +238,8 @@
       pointsA.addEventListener('change', calculateRoundScore);
       bonusB.addEventListener('change', calculateRoundScore);
       pointsB.addEventListener('change', calculateRoundScore);
+      bonusC.addEventListener('change', calculateRoundScore);
+      pointsC.addEventListener('change', calculateRoundScore);
 
     }
   })();
