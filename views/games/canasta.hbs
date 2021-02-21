@@ -32,35 +32,32 @@
 
   <div style="height:450px; overflow-y:auto">
     <table class="canasta-score-sheet">
-
-
-
       {{#times 9}}
         <tr class="space-before">
           <td width="100">Bonus</td>
           <td width="180">
-            <input type="text" name="team-A-{{@this}}-bonus" id="team-A-{{@this}}-bonus"/>
+            <input type="number" name="team-A-{{@this}}-bonus" id="team-A-{{@this}}-bonus"/>
           </td>
           <td width="180">
-            <input type="text" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
+            <input type="number" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
           </td>
         </tr>
         <tr>
           <td>Card Points</td>
           <td>
-            <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
+            <input type="number" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
           </td>
           <td>
-            <input type="text" name="team-B-{{@this}}-points" id="team-B-{{@this}}-points"/>
+            <input type="number" name="team-B-{{@this}}-points" id="team-B-{{@this}}-points"/>
           </td>
         </tr>
         <tr style="border-bottom:solid 1px black;" class="space-after">
           <td><strong>Total</strong></td>
           <td>
-            <input type="text" disabled name="team-A-{{@this}}-total" id="team-A-{{@this}}-total"/>
+            <input type="number" disabled name="team-A-{{@this}}-total" id="team-A-{{@this}}-total"/>
           </td>
           <td>
-            <input type="text" disabled name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
+            <input type="number" disabled name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
           </td>
         </tr>
       {{/times}}
