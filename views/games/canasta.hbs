@@ -1,33 +1,47 @@
 <h2>Canasta Score Sheet</h2>
 
 <div class="d-flex">
-  <div style="height:550px; overflow-y:auto">
-    <table class="canasta-score-sheet">
-      <tr>
-        <th>
-          &nbsp;
-        </th>
-        <th>Player/Team</th>
-        <th>Player/Team</th>
-      </tr>
-      <tr style="border-bottom:solid 1px black;" class="space-after">
-        <td>
 
-        </td>
-        <td>
-          <input type="text"/>
-        </td>
-        <td>
-          <input type="text"/>
-        </td>
-      </tr>
+  <div>
+  <table>
+    <tr>
+      <th>
+        &nbsp;
+      </th>
+      <th>Player/Team</th>
+      <th>Player/Team</th>
+    </tr>
+    <tr>
+      <td>
+
+      </td>
+      <td>
+        <input type="text"/>
+      </td>
+      <td>
+        <input type="text"/>
+      </td>
+    </tr>
+    <tr style="border-bottom:solid 1px black;" class="space-after">
+      <td width="100">Total score</td>
+      <td width="180"><input type="text" disabled name="team-A-grand-total-top" id="team-A-grand-total-top"/></td>
+      <td width="180"><input type="text" disabled name="team-B-grand-total-top" id="team-B-grand-total-top"/></td>
+    </tr>
+
+  </table>
+
+  <div style="height:450px; overflow-y:auto">
+    <table class="canasta-score-sheet">
+
+
+
       {{#times 9}}
         <tr class="space-before">
-          <td>Bonus</td>
-          <td>
+          <td width="100">Bonus</td>
+          <td width="180">
             <input type="text" name="team-A-{{@this}}-bonus" id="team-A-{{@this}}-bonus"/>
           </td>
-          <td>
+          <td width="180">
             <input type="text" name="team-B-{{@this}}-bonus" id="team-B-{{@this}}-bonus"/>
           </td>
         </tr>
@@ -37,26 +51,28 @@
             <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
           </td>
           <td>
-            <input type="text" name="team-A-{{@this}}-points" id="team-A-{{@this}}-points"/>
+            <input type="text" name="team-B-{{@this}}-points" id="team-B-{{@this}}-points"/>
           </td>
         </tr>
         <tr style="border-bottom:solid 1px black;" class="space-after">
           <td><strong>Total</strong></td>
           <td>
-            <input type="text" name="team-A-{{@this}}-total" id="team-A-{{@this}}-total"/>
+            <input type="text" disabled name="team-A-{{@this}}-total" id="team-A-{{@this}}-total"/>
           </td>
           <td>
-            <input type="text" name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
+            <input type="text" disabled name="team-B-{{@this}}-total" id="team-B-{{@this}}-total"/>
           </td>
         </tr>
       {{/times}}
 
       <tr class="space-before">
         <td><strong>Final Score</strong></td>
-        <td><input type="text"/></td>
-        <td><input type="text"/></td>
+        <td><input type="text" name="team-A-grand-total" id="team-A-grand-total"/></td>
+        <td><input type="text" name="team-B-grand-total" id="team-B-grand-total"/></td>
       </tr>
     </table>
+  </div>
+
   </div>
 
   <div class="ml-4">
@@ -150,3 +166,56 @@
 <div style="height:2em;">
 
 </div>
+
+<script type="text/javascript">
+  (function() {
+
+    function getTotalScore() {
+      let totalA = 0;
+      let totalB = 0;
+
+      const teamAGrandTotal = document.getElementById('team-A-grand-total');
+      const teamBGrandTotal = document.getElementById('team-B-grand-total');
+
+      const teamAGrandTotalTop = document.getElementById('team-A-grand-total-top');
+      const teamBGrandTotalTop = document.getElementById('team-B-grand-total-top');
+
+      for(let i = 0; i < 9; i++)
+      {
+        const roundTotalA = document.getElementById('team-A-' + i + '-total');
+        const roundTotalB = document.getElementById('team-B-' + i + '-total');
+
+        totalA += Number(roundTotalA.value);
+        totalB += Number(roundTotalB.value);
+      }
+
+      teamAGrandTotal.value = totalA;
+      teamBGrandTotal.value = totalB;
+
+      teamAGrandTotalTop.value = totalA;
+      teamBGrandTotalTop.value = totalB;
+    }
+
+    for(let i = 0; i <9; i++) {
+      const bonusA = document.getElementById('team-A-' + i + '-bonus');
+      const bonusB = document.getElementById('team-B-' + i + '-bonus');
+      const pointsA = document.getElementById('team-A-' + i + '-points');
+      const pointsB = document.getElementById('team-B-' + i + '-points');
+      const totalA = document.getElementById('team-A-' + i + '-total');
+      const totalB = document.getElementById('team-B-' + i + '-total');
+
+      const calculateRoundScore = () => {
+        totalA.value = Number(bonusA.value) + Number(pointsA.value);
+        totalB.value = Number(bonusB.value) + Number(pointsB.value);
+
+        getTotalScore();
+      }
+
+      bonusA.addEventListener('change', calculateRoundScore);
+      pointsA.addEventListener('change', calculateRoundScore);
+      bonusB.addEventListener('change', calculateRoundScore);
+      pointsB.addEventListener('change', calculateRoundScore);
+
+    }
+  })();
+</script>
